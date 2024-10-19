@@ -9,7 +9,7 @@
 		"" "They match the portal colour of the surface they are mounted on. "
 		"" "Same-coloured blocks can intersect freely.  "
 		"" ""
-		"" "* Set Start Reversed to make it oppsitely-coloured to the mounted surface."
+		"" "* Set Start Reversed to make it oppositely-coloured to the mounted surface."
 		}
 	"ent_count"   "0"
 	
