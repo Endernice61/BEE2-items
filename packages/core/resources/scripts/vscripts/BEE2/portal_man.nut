@@ -5,7 +5,14 @@ has_blue <- true;
 has_oran <- true;
 has_pgun <- true;
 
+pgun_blue_active <- true;
+pgun_oran_active <- true;
+
 start_pos <- self.GetOrigin();
+
+bluegun <- null;
+orangun <- null;
+
 
 // Takes the gun off you.
 stripper <- null;
@@ -43,27 +50,53 @@ function _find_players() {
 	// Grab the two coop players, which we know are in this order.
 	player_blue <- Entities.FindByClassname(null, "player");
 	player_oran <- Entities.FindByClassname(player_blue, "player");
+	//Make sure we know when players spawn!
+	EntFire("@cube_dropper_spawntrigger_2","AddOutput","OnStartTouch @portalgun,CallScriptFunction,on_oran_spawn,0,-1");
+	EntFire("@cube_dropper_spawntrigger_3","AddOutput","OnStartTouch @portalgun,CallScriptFunction,on_blue_spawn,0,-1");
+	//Get and set pguns
+	on_blue_spawn();
+	on_oran_spawn();
+}
+
+function on_blue_spawn() {
+	bluegun <- Entities.FindByClassnameNearest("weapon_portalgun",player_blue.GetOrigin(),64);
+	set_gun(pgun_blue_active,pgun_oran_active);
+}
+function on_oran_spawn() {
+	orangun <- Entities.FindByClassnameNearest("weapon_portalgun",player_oran.GetOrigin(),64);
+	set_gun(pgun_blue_active,pgun_oran_active);
 }
 
 // Called OnMapSpawn by the compiler, passing in this config values.
 // We then appropriately remove/give the gun to the player.
-// In Coop, never called.
+// In Coop, still called.
 init_called <- false
 function init(blue, orange, has_onoff) {
-	if (IsMultiplayer() || init_called) {
+	if (init_called) {
 		return; 
 	}
 	init_called = true
 
 	has_blue = blue
 	has_oran = orange
+
 	if (has_onoff) {
-		portalgun_onoff_count = 0
-		give_gun(0, 0)
+		portalgun_onoff_count = 0;
+		pgun_blue_active <- false;
+		pgun_oran_active <- false;
+		if (IsMultiplayer()) return;
+		give_gun(0, 0);
 	} else if (!has_blue && !has_oran) {
-		remove_pgun()
+		remove_pgun();
+		pgun_blue_active <- false;
+		pgun_oran_active <- false;
+		if (IsMultiplayer()) return;
+		give_gun(0, 0);
 	} else {
-		give_gun(blue, orange)
+		pgun_blue_active <- has_blue;
+		pgun_oran_active <- has_oran;
+		if (IsMultiplayer()) return;
+		give_gun(blue, orange);
 	}
 }
 
@@ -100,6 +133,7 @@ function upgrade(blue, orange) {
 
 // Public: Remove the player's gun.
 function remove_pgun() {
+	// Take the gun off the player
 	if (!has_pgun || IsMultiplayer()) { return; }
 	EntFireByHandle(stripper, "Enable", "", 0.0, self, self);
 	EntFireByHandle(stripper, "Disable", "", 0.1, self, self);
@@ -108,9 +142,9 @@ function remove_pgun() {
 
 // Public: Give the player their gun back with the same settings.
 function return_pgun() {
-	give_gun(has_blue, has_oran);
+	if (IsMultiplayer()) set_gun(pgun_blue_active, pgun_oran_active);
+	else give_gun(has_blue, has_oran);
 }
-
 
 // Public: Give the player a gun with the specified colours, or replace an existing one.
 function give_gun(blue, oran) {
@@ -131,16 +165,31 @@ function give_gun(blue, oran) {
 	_held_object = null;
 	
 	if (has_pgun) { 
-		remove_pgun()
+		remove_pgun();
 	}
 	EntFireByHandle(held_trig, "Enable", "", 0.0, self, self);
 	EntFireByHandle(held_trig, "Disable", "", 0.1, self, self);
 	EntFireByHandle(self, "ForceSpawn", "", 0.1, self, self);
+	
 }
 
 
+function set_gun(blue, oran) {
+	if (bluegun != null && bluegun.IsValid()) {//If not, the player is dead or hasn't had their spawn code run yet and will spawn with it
+		bluegun.__KeyValueFromInt("CanFirePortal1",blue.tointeger());
+		bluegun.__KeyValueFromInt("CanFirePortal2",oran.tointeger());
+	}
+	pgun_blue_active <- blue;
+	if (orangun != null && orangun.IsValid()) {//If not, the player is dead or hasn't had their spawn code run yet and will spawn with it
+		orangun.__KeyValueFromInt("CanFirePortal1",blue.tointeger());
+		orangun.__KeyValueFromInt("CanFirePortal2",oran.tointeger());
+	}
+	pgun_oran_active <- oran;
+}
+
 // Public: Increment the number of Portalgun on/off buttons being pressed.
-function pgun_btn_act() {	
+function pgun_btn_act() {
+	
 	//  Are we disabled?
 	if (portalgun_onoff_count == -1) { return}
 	
@@ -148,20 +197,26 @@ function pgun_btn_act() {
 	
 	if (portalgun_onoff_count == 1) {
 		// Didn't have a gun, give them one.
+		pgun_blue_active <- has_blue;
+		pgun_oran_active <- has_oran;
 		return_pgun();
 	}
 }
 
 // Public: Decrement the number of Portalgun on/off buttons being pressed.
-function pgun_btn_deact() {	
+function pgun_btn_deact() {
+	
 	//  Are we disabled?
 	if (portalgun_onoff_count == -1) { return}
 	
 	portalgun_onoff_count = portalgun_onoff_count - 1;
 	
 	if (portalgun_onoff_count == 0) {
+		pgun_blue_active <- false;
+		pgun_oran_active <- false;
 		// Replace the gun with a no-portal gun.
-		give_gun(0, 0);
+		if (IsMultiplayer()) set_gun(0, 0);
+		else give_gun(0, 0);
 	}
 }
 
@@ -189,7 +244,8 @@ function map_won() {
 		return;
 	}
 	if (portalgun_onoff_count > 0) {
-		give_gun(0, 0);
+		if (IsMultiplayer()) set_gun(0, 0);
+		else give_gun(0, 0);
 	}
 	portalgun_onoff_count = -1;
 }
@@ -226,7 +282,6 @@ function get_portal_pairs() {
 	}
 	return results;
 }
-
 function portal_active_ent(portal) {
 	return portal_active(portal.GetScriptScope());
 }
@@ -314,9 +369,7 @@ function _on_spawn() {
 	}
 	
 	_spawn_scheduled = false;
-	gun.__KeyValueFromInt("CanFirePortal1", _next_blue.tointeger())
-	gun.__KeyValueFromInt("CanFirePortal2", _next_oran.tointeger())
-	gun.__KeyValueFromInt("Rendermode", 10) // Don't let the player see it onscreen!
+	set_pgun_keys(gun);
 	_next_blue = _next_oran = null;
 		
 	// TP to player.
@@ -331,7 +384,12 @@ function _on_spawn() {
 	}
 	_held_object = null;
 }
-self.ConnectOutput("OnEntitySpawned", "_on_spawn")
+
+function set_pgun_keys(gun) {
+	gun.__KeyValueFromInt("CanFirePortal1", _next_blue.tointeger())
+	gun.__KeyValueFromInt("CanFirePortal2", _next_oran.tointeger())
+	gun.__KeyValueFromInt("Rendermode", 10) // Don't let the player see it onscreen!
+}
 
 // These are triggered by map-global portal detectors, to let us detect open/closed
 // portals. This avoids RunScriptCode compiles each time.
@@ -364,7 +422,7 @@ function _on_open(port_id, is_oran) {
 		func(portal);
 	}
 }
-
+ 
 function _on_close(port_id) {
 	local portal = activator;
 	if (GetDeveloperLevel() > 0) {
@@ -376,3 +434,4 @@ function _on_close(port_id) {
 		func(portal);
 	}
 }
+self.ConnectOutput("OnEntitySpawned", "_on_spawn")
