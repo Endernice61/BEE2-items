@@ -19,6 +19,7 @@ pos <- 0;  // Position we want to be at.
 // 1    _2_  ___
 //       1    |
 // 0 ____1____|_
+TOP <- 4;
 
 // 1-4 = ents, may be null.
 pistons <- {};
@@ -61,7 +62,7 @@ function OnPostSpawn() {
 	local found_pist = false;
 	local start_pos = (SPAWN_UP) ? POS_UP : POS_DN;
 	local highest_pos = 0;
-	for (local i=1; i<=4; i++) {
+	for (local i=1; i<=TOP; i++) {
 		pist = Entities.FindByName(null, inst_name + "-pist" + i);
 		pistons[i] <- pist;
 		// Hookup IO to notify us when they've reached the ends.
@@ -184,7 +185,7 @@ function _dn() {
 		return;
 	}
 	// Do not include piston[pos].
-	for(local i=4; i>pos; i--) {
+	for(local i=TOP; i>pos; i--) {
 		if (positions[i] != POS_DN) {
 			positions[i] = POS_MOVING;
 			if (SPEED_DOWN != SPEED_UP) {//From init_code
