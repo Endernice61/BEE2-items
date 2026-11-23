@@ -263,6 +263,19 @@
 
 "Item"
 	{
+	"ID"       "ITEM_BEE2_BLOCK_ANGLED_PARTIAL"
+	"Unstyled" "1"
+	"Version"
+		{
+		"Styles"
+			{
+			"ANY"	"angled_partial"
+			}
+		}
+	}
+
+"Item"
+	{
 	"ID"       "ITEM_BEE2_BLOCK_ANGLED_CORNER"
 	"Unstyled" "1"
 	"Migrations"

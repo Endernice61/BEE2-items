@@ -1,0 +1,93 @@
+"Item"
+	{
+	"Type"			"ITEM_BEE2_BLOCK_ANGLED_PARTIAL"
+	"Editor"
+		{
+		"SubTypeProperty"	"ButtonType"
+		"SubType"
+			{
+			"Name"	"Block - Angled 4x1x1"
+			"Model"	"bee2/logic/blocks/angled_45.mdl"
+			"Palette"
+				{
+				"ToolTip"	"ANGLED BLOCK 4x1x1"
+				"Image"		"palette/logic/blocks/angled_45.vtf"
+				}
+			"Sounds"
+				{
+				"SOUND_CREATED"					"P2Editor.PlaceButton"
+				"SOUND_EDITING_ACTIVATE"		"P2Editor.DropperDisabled"
+				"SOUND_EDITING_DEACTIVATE"		"P2Editor.DropperEnabled"
+				"SOUND_DELETED"					"P2Editor.RemoveButton"
+				}
+			}
+		"SubType"
+			{
+			"Name"	"Block - Angled 4x2x2"
+			"Model"	"bee2/logic/blocks/angled_45.mdl"
+			"Palette"
+				{
+				"ToolTip"	"ANGLED BLOCK 4x3x3"
+				"Image"		"palette/logic/blocks/angled_45.vtf"
+				}
+			"Sounds"
+				{
+				"SOUND_CREATED"					"P2Editor.PlaceButton"
+				"SOUND_EDITING_ACTIVATE"		"P2Editor.DropperDisabled"
+				"SOUND_EDITING_DEACTIVATE"		"P2Editor.DropperEnabled"
+				"SOUND_DELETED"					"P2Editor.RemoveButton"
+				}
+			}
+		"SubType"
+			{
+			"Name"	"Block - Angled 4x3x3"
+			"Model"	"bee2/logic/blocks/angled_45.mdl"
+			"Palette"
+				{
+				"ToolTip"	"ANGLED BLOCK 4x3x3"
+				"Image"		"palette/logic/blocks/angled_45.vtf"
+				}
+			"Sounds"
+				{
+				"SOUND_CREATED"					"P2Editor.PlaceButton"
+				"SOUND_EDITING_ACTIVATE"		"P2Editor.DropperDisabled"
+				"SOUND_EDITING_DEACTIVATE"		"P2Editor.DropperEnabled"
+				"SOUND_DELETED"					"P2Editor.RemoveButton"
+				}
+			}
+		"MovementHandle"    "HANDLE_4_DIRECTIONS"
+		"DesiredFacing"     "DESIRES_DOWN"
+		}
+	"Properties"
+		{
+		"ButtonType"
+			{
+			"DefaultValue"  "0"
+			"Index"         "1"
+			}
+		"StartReversed"
+			{
+			"DefaultValue"  "0"
+			"Index"         "2"
+			}
+		"StartEnabled"
+			{
+			"DefaultValue"	"1"
+			"Index"			"3"
+			}
+		}
+	"Exporting"
+		{
+		"Instances"
+			{
+			"0" "<marker>"
+			"1" "<marker>"
+			"2" "<marker>"
+			"3" "<marker>"
+			"4" "<marker>"
+			"5" "<marker>"
+			}
+		"TargetName"		""
+		"Offset"	"64 64 64"
+		}
+	}
