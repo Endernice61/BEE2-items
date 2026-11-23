@@ -1,6 +1,7 @@
 "Item"
 	{
 	"Type"			"ITEM_BEE2_BLOCK_ANGLED_PARTIAL"
+	"ItemClass" "ItemButtonFloor"
 	"Editor"
 		{
 		"SubTypeProperty"	"ButtonType"
